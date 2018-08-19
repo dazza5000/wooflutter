@@ -32,11 +32,10 @@ class ProductsListPage extends StatelessWidget {
   }
 
   _buildProductsListPage() {
-    Size screenSize = MediaQuery.of(context).size;
     return Container(
       color: Colors.grey[100],
       child: FutureBuilder<List<Product>>(
-        future: _parseProductsFromResponse(95),
+        future: _parseProductsFromResponse(0),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.active:
