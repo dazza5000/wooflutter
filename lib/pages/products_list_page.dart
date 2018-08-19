@@ -73,7 +73,7 @@ class ProductsListPage extends StatelessWidget {
   Future<dynamic> _getProductsByCategory(categoryId, pageIndex) async {
     var response = await http.get(
       RemoteConfig.config["BASE_URL"] +
-          RemoteConfig.config["BASE_PRODUCTS_URL"] +
+          RemoteConfig.config["BASE_PRODUCTS_URL"] + _getAuthorizationParameterString() +
           "&category=$categoryId&per_page=6&page=$pageIndex",
       headers: {
         "Authorization": RemoteConfig.config["AuthorizationToken"],
@@ -86,6 +86,14 @@ class ProductsListPage extends StatelessWidget {
 
     return json.decode(response.body);
   }
+
+  String _getAuthorizationParameterString () {
+    String authorizationParameters = "consumer_key=" + RemoteConfig.config["CONSUMER_KEY"]
+        + "&consumer_secret=" + RemoteConfig.config["CONSUMER_SECRET"];
+
+    return authorizationParameters;
+  }
+
 
   Future<List<Product>> _parseProductsFromResponse(int categoryId) async {
     List<Product> productsList = <Product>[];
