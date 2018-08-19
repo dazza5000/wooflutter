@@ -49,7 +49,7 @@ class ProductsListPage extends StatelessWidget {
 
             case ConnectionState.done:
               return ListView.builder(
-                itemCount: 8,
+                itemCount: 0,
                 itemBuilder: (context, index) {
                   if (index % 2 == 0) {
                     //2nd, 4th, 6th.. index would contain nothing since this would
