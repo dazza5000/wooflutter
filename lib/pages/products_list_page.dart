@@ -72,11 +72,8 @@ class ProductsListPage extends StatelessWidget {
   Future<dynamic> _getProductsByCategory(categoryId, pageIndex) async {
     var response = await http.get(
       RemoteConfig.config["BASE_URL"] +
-          RemoteConfig.config["BASE_PRODUCTS_URL"] + _getAuthorizationParameterString() +
-          "&category=$categoryId&per_page=6&page=$pageIndex",
-      headers: {
-        "Authorization": RemoteConfig.config["AuthorizationToken"],
-      },
+          RemoteConfig.config["BASE_PRODUCTS_URL"] + "&" + _getAuthorizationParameterString() +
+          "&categoryId=$categoryId&per_page=6&page=$pageIndex",
     ).catchError(
           (error) {
         return false;
