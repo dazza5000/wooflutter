@@ -49,6 +49,7 @@ class ProductsListPage extends StatelessWidget {
             case ConnectionState.done:
               return ListView.builder(
                 itemCount: snapshot.data.length,
+                  padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
                 itemBuilder: (context, index) {
                   if (index == 0 || index % 2 == 0) {
                     //2nd, 4th, 6th.. index would contain nothing since this would
