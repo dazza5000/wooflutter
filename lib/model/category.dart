@@ -10,9 +10,9 @@ class Category {
 
   Category(
       {this.id,
-        this.name,
-        this.parent,
-        this.description,
-        this.image,
-        this.count});
+      this.name,
+      this.parent,
+      this.description,
+      this.image,
+      this.count});
 }

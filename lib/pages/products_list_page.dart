@@ -41,16 +41,16 @@ class ProductsListPage extends StatelessWidget {
             case ConnectionState.active:
 
             case ConnectionState.waiting:
-              return Center(child: CircularProgressIndicator());
+              return Center(child:CircularProgressIndicator());
 
             case ConnectionState.none:
               return Center(child: Text("Unable to connect right now"));
 
             case ConnectionState.done:
               return ListView.builder(
-                itemCount: 0,
+                itemCount: snapshot.data.length,
                 itemBuilder: (context, index) {
-                  if (index % 2 == 0) {
+                  if (index == 0 || index % 2 == 0) {
                     //2nd, 4th, 6th.. index would contain nothing since this would
                     //be handled by the odd indexes where the row contains 2 items
                     return Container();
@@ -72,7 +72,7 @@ class ProductsListPage extends StatelessWidget {
   Future<dynamic> _getProductsByCategory(categoryId, pageIndex) async {
     var response = await http.get(
       RemoteConfig.config["BASE_URL"] +
-          RemoteConfig.config["BASE_PRODUCTS_URL"] + "&" + _getAuthorizationParameterString() +
+          RemoteConfig.config["BASE_PRODUCTS_URL"] + "?" + _getAuthorizationParameterString() +
           "&categoryId=$categoryId&per_page=6&page=$pageIndex",
     ).catchError(
           (error) {
@@ -135,17 +135,9 @@ class ProductsListPage extends StatelessWidget {
           description: newProduct["description"],
           regularPrice: newProduct["regular_price"],
           salePrice: newProduct["sale_price"],
-          stockQuantity: newProduct["stock_quantity"] != null
-              ? newProduct["stock_quantity"]
-              : 0,
-          ifItemAvailable: newProduct["on_sale"] &&
-              newProduct["purchasable"] &&
-              newProduct["in_stock"],
-          discount: ((((int.parse(newProduct["regular_price"]) -
-              int.parse(newProduct["sale_price"])) /
-              (int.parse(newProduct["regular_price"]))) *
-              100))
-              .round(),
+          stockQuantity: 0,
+          ifItemAvailable: true,
+          discount: 0 ,
           images: imagesOfProductList,
           categories: categoriesOfProductList,
         );
