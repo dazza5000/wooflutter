@@ -41,27 +41,23 @@ class ProductsListPage extends StatelessWidget {
             case ConnectionState.active:
 
             case ConnectionState.waiting:
-              return Center(child:CircularProgressIndicator());
+              return Center(child: CircularProgressIndicator());
 
             case ConnectionState.none:
               return Center(child: Text("Unable to connect right now"));
 
             case ConnectionState.done:
-              return ListView.builder(
+              return GridView.builder(
+                scrollDirection: Axis.vertical,
+                gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
                 itemCount: snapshot.data.length,
-                  padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                 itemBuilder: (context, index) {
-                  if (index == 0 || index % 2 == 0) {
-                    //2nd, 4th, 6th.. index would contain nothing since this would
-                    //be handled by the odd indexes where the row contains 2 items
-                    return Container();
-                  } else {
-                    //1st, 3rd, 5th.. index would contain a row containing 2 products
-                    return ProductsListItem(
-                      product1: snapshot.data[index - 1],
-                      product2: snapshot.data[index],
-                    );
-                  }
+                  //1st, 3rd, 5th.. index would contain a row containing 2 products
+                  return ProductsListItem(
+                    product1: snapshot.data[index],
+                  );
                 },
               );
           }
@@ -71,12 +67,16 @@ class ProductsListPage extends StatelessWidget {
   }
 
   Future<dynamic> _getProductsByCategory(categoryId, pageIndex) async {
-    var response = await http.get(
+    var response = await http
+        .get(
       RemoteConfig.config["BASE_URL"] +
-          RemoteConfig.config["BASE_PRODUCTS_URL"] + "?" + _getAuthorizationParameterString() +
+          RemoteConfig.config["BASE_PRODUCTS_URL"] +
+          "?" +
+          _getAuthorizationParameterString() +
           "&categoryId=$categoryId&per_page=6&page=$pageIndex",
-    ).catchError(
-          (error) {
+    )
+        .catchError(
+      (error) {
         return false;
       },
     );
@@ -84,13 +84,14 @@ class ProductsListPage extends StatelessWidget {
     return json.decode(response.body);
   }
 
-  String _getAuthorizationParameterString () {
-    String authorizationParameters = "consumer_key=" + RemoteConfig.config["CONSUMER_KEY"]
-        + "&consumer_secret=" + RemoteConfig.config["CONSUMER_SECRET"];
+  String _getAuthorizationParameterString() {
+    String authorizationParameters = "consumer_key=" +
+        RemoteConfig.config["CONSUMER_KEY"] +
+        "&consumer_secret=" +
+        RemoteConfig.config["CONSUMER_SECRET"];
 
     return authorizationParameters;
   }
-
 
   Future<List<Product>> _parseProductsFromResponse(int categoryId) async {
     List<Product> productsList = <Product>[];
@@ -98,12 +99,12 @@ class ProductsListPage extends StatelessWidget {
     var dataFromResponse = await _getProductsByCategory(categoryId, 1);
 
     dataFromResponse.forEach(
-          (newProduct) {
+      (newProduct) {
         //parse the product's images
         List<AnyImage> imagesOfProductList = [];
 
         newProduct["images"].forEach(
-              (newImage) {
+          (newImage) {
             imagesOfProductList.add(
               new AnyImage(
                 imageURL: newImage["src"],
@@ -119,7 +120,7 @@ class ProductsListPage extends StatelessWidget {
         List<Category> categoriesOfProductList = [];
 
         newProduct["categories"].forEach(
-              (newCategory) {
+          (newCategory) {
             categoriesOfProductList.add(
               new Category(
                 id: newCategory["id"],
@@ -138,7 +139,7 @@ class ProductsListPage extends StatelessWidget {
           salePrice: newProduct["sale_price"],
           stockQuantity: 0,
           ifItemAvailable: true,
-          discount: 0 ,
+          discount: 0,
           images: imagesOfProductList,
           categories: categoriesOfProductList,
         );
@@ -150,5 +151,3 @@ class ProductsListPage extends StatelessWidget {
     return productsList;
   }
 }
-
-

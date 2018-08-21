@@ -5,11 +5,9 @@ import 'package:woo_flutter/pages/product_detail_page.dart';
 
 class ProductsListItem extends StatelessWidget {
   final Product product1;
-  final Product product2;
 
   ProductsListItem({
     @required this.product1,
-    @required this.product2,
   });
 
   @override
@@ -19,7 +17,6 @@ class ProductsListItem extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         _buildProductItemCard(context, product1),
-        _buildProductItemCard(context, product2),
       ],
     );
   }
