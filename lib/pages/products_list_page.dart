@@ -10,11 +10,9 @@ import 'package:woo_flutter/util/remoteconfig.dart';
 import 'package:woo_flutter/widgets/products_list_item.dart';
 
 class ProductsListPage extends StatelessWidget {
-  BuildContext context;
 
   @override
   Widget build(BuildContext context) {
-    this.context = context;
 
     return Scaffold(
       appBar: AppBar(
@@ -44,18 +42,17 @@ class ProductsListPage extends StatelessWidget {
               return Center(child: CircularProgressIndicator());
 
             case ConnectionState.none:
-              return Center(child: Text("Unable to connect right now"));
+              return Center(child: Text("No Connection"));
 
             case ConnectionState.done:
               return GridView.builder(
                 scrollDirection: Axis.vertical,
                 gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: .7,
+                    childAspectRatio: .8,
                     crossAxisCount: 2),
                 itemCount: snapshot.data == null ? 0 : snapshot.data.length,
                 padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
                 itemBuilder: (context, index) {
-                  //1st, 3rd, 5th.. index would contain a row containing 2 products
                   return ProductsListItem(
                     product1: snapshot.data[index],
                   );
@@ -73,25 +70,16 @@ class ProductsListPage extends StatelessWidget {
       RemoteConfig.config["BASE_URL"] +
           RemoteConfig.config["BASE_PRODUCTS_URL"] +
           "?" +
-          _getAuthorizationParameterString() +
+          RemoteConfig.getAuthorizationParameterString() +
           "&categoryId=$categoryId&per_page=6&page=$pageIndex",
     )
         .catchError(
-      (error) {
+          (error) {
         return false;
       },
     );
 
     return json.decode(response.body);
-  }
-
-  String _getAuthorizationParameterString() {
-    String authorizationParameters = "consumer_key=" +
-        RemoteConfig.config["CONSUMER_KEY"] +
-        "&consumer_secret=" +
-        RemoteConfig.config["CONSUMER_SECRET"];
-
-    return authorizationParameters;
   }
 
   Future<List<Product>> _parseProductsFromResponse(int categoryId) async {
@@ -100,12 +88,12 @@ class ProductsListPage extends StatelessWidget {
     var dataFromResponse = await _getProductsByCategory(categoryId, 1);
 
     dataFromResponse.forEach(
-      (newProduct) {
-        //parse the product's images
+          (newProduct) {
+
         List<WooCommerceImage> imagesOfProductList = [];
 
         newProduct["images"].forEach(
-          (newImage) {
+              (newImage) {
             imagesOfProductList.add(
               new WooCommerceImage(
                 imageURL: newImage["src"],
@@ -117,11 +105,10 @@ class ProductsListPage extends StatelessWidget {
           },
         );
 
-        //parse the product's categories
         List<Category> categoriesOfProductList = [];
 
         newProduct["categories"].forEach(
-          (newCategory) {
+              (newCategory) {
             categoriesOfProductList.add(
               new Category(
                 id: newCategory["id"],
@@ -131,16 +118,18 @@ class ProductsListPage extends StatelessWidget {
           },
         );
 
-        //parse new product's details
         Product product = new Product(
           productId: newProduct["id"],
           productName: newProduct["name"],
           description: newProduct["description"],
           regularPrice: newProduct["regular_price"],
           salePrice: newProduct["sale_price"],
-          stockQuantity: 0,
-          ifItemAvailable: true,
-          discount: 0,
+          stockQuantity: newProduct["stock_quantity"] != null
+              ? newProduct["stock_quantity"]
+              : 0,
+          ifItemAvailable: newProduct["purchasable"] &&
+              newProduct["in_stock"],
+          discount: _getDiscountForProduct(newProduct),
           images: imagesOfProductList,
           categories: categoriesOfProductList,
         );
@@ -150,5 +139,21 @@ class ProductsListPage extends StatelessWidget {
     );
 
     return productsList;
+  }
+
+  int _getDiscountForProduct(dynamic newProduct) {
+
+    int salePrice = 0;
+    String salePriceString = newProduct["sale_price"];
+    if (salePriceString.isEmpty) {
+      salePrice = 0;
+    } else {
+      salePrice = int.parse(salePriceString);
+    }
+
+    int regularPrice = int.parse(newProduct["regular_price"]);
+    int discount = regularPrice - salePrice;
+    int discountPercent = (discount / regularPrice * 100).round();
+    return discountPercent;
   }
 }

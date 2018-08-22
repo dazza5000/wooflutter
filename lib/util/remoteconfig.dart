@@ -5,4 +5,13 @@ class RemoteConfig {
     "BASE_URL": "https://wooflutter.whereisdarran.com/wp-json/wc/v2/",
     "BASE_PRODUCTS_URL": "products",
   };
+
+  static String getAuthorizationParameterString() {
+    String authorizationParameters = "consumer_key=" +
+        RemoteConfig.config["CONSUMER_KEY"] +
+        "&consumer_secret=" +
+        RemoteConfig.config["CONSUMER_SECRET"];
+
+    return authorizationParameters;
+  }
 }
