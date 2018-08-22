@@ -37,7 +37,6 @@ class ProductsListPage extends StatelessWidget {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.active:
-
             case ConnectionState.waiting:
               return Center(child: CircularProgressIndicator());
 
@@ -65,15 +64,11 @@ class ProductsListPage extends StatelessWidget {
   }
 
   Future<dynamic> _getProductsByCategory(categoryId, pageIndex) async {
-    var response = await http
-        .get(
-      RemoteConfig.config["BASE_URL"] +
-          RemoteConfig.config["BASE_PRODUCTS_URL"] +
-          "?" +
-          RemoteConfig.getAuthorizationParameterString() +
-          "&categoryId=$categoryId&per_page=6&page=$pageIndex",
-    )
-        .catchError(
+    var response = await http.get(
+        RemoteConfig.config["BASE_URL"] +
+            RemoteConfig.config["BASE_PRODUCTS_URL"] + "?" +
+            RemoteConfig.getAuthorizationParameterString() +
+            "&categoryId=$categoryId&per_page=6&page=$pageIndex").catchError(
           (error) {
         return false;
       },
