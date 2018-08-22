@@ -1,11 +1,11 @@
-class AnyImage {
+class WooCommerceImage {
   int id;
   String imageDescription;
   String imageURL;
   String title;
   String alt;
 
-  AnyImage({
+  WooCommerceImage({
     this.id,
     this.imageDescription,
     this.imageURL,

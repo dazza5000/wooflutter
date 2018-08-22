@@ -1,4 +1,4 @@
-import 'package:woo_flutter/model/any_image.dart';
+import 'package:woo_flutter/model/woo_commerce_image.dart';
 import 'package:woo_flutter/model/category.dart';
 
 class Product {
@@ -6,7 +6,7 @@ class Product {
   int productId;
   String productName;
   List<Category> categories;
-  List<AnyImage> images;
+  List<WooCommerceImage> images;
   List<String> size;
   String shortDescription;
   String regularPrice;

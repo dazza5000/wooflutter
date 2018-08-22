@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
-import 'package:woo_flutter/model/any_image.dart';
+import 'package:woo_flutter/model/woo_commerce_image.dart';
 import 'package:woo_flutter/model/category.dart';
 import 'package:woo_flutter/model/product.dart';
 import 'package:woo_flutter/util/remoteconfig.dart';
@@ -50,9 +50,10 @@ class ProductsListPage extends StatelessWidget {
               return GridView.builder(
                 scrollDirection: Axis.vertical,
                 gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: .7,
                     crossAxisCount: 2),
-                itemCount: snapshot.data.length,
-                padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                itemCount: snapshot.data == null ? 0 : snapshot.data.length,
+                padding: const EdgeInsets.only(top: 4.0, bottom: 4.0),
                 itemBuilder: (context, index) {
                   //1st, 3rd, 5th.. index would contain a row containing 2 products
                   return ProductsListItem(
@@ -101,12 +102,12 @@ class ProductsListPage extends StatelessWidget {
     dataFromResponse.forEach(
       (newProduct) {
         //parse the product's images
-        List<AnyImage> imagesOfProductList = [];
+        List<WooCommerceImage> imagesOfProductList = [];
 
         newProduct["images"].forEach(
           (newImage) {
             imagesOfProductList.add(
-              new AnyImage(
+              new WooCommerceImage(
                 imageURL: newImage["src"],
                 id: newImage["id"],
                 title: newImage["name"],

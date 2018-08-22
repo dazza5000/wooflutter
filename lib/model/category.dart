@@ -1,11 +1,11 @@
-import 'package:woo_flutter/model/any_image.dart';
+import 'package:woo_flutter/model/woo_commerce_image.dart';
 
 class Category {
   int id;
   String name;
   int parent;
   String description;
-  AnyImage image;
+  WooCommerceImage image;
   int count;
 
   Category(
